@@ -21,7 +21,6 @@ const ForecastContainer = ({ loading, setLoading, currentData, isMetric, lat, lo
     setForecastData(searchDataArray);
     setForecastType(`${numOfDays}-day`);
     setLoading(false);
-    console.log(searchDataArray);
   }
 
   useEffect(() => {
@@ -34,23 +33,26 @@ const ForecastContainer = ({ loading, setLoading, currentData, isMetric, lat, lo
 
   return (
     <>
-    <div>
-      <button onClick={() => setForecastType('current')}>Current weather</button>
-      <button onClick={() => searchForecast(3)}>Next 3 days</button>
-      <button onClick={() => searchForecast(5)}>Next 5 days</button>
-    </div>
-    <div>{ currentData?.name }</div>
-    <div>
-      {
-        loading
-        ? 'Loading...'
-        : currentData.cod !== 200
-        ? currentData.message
-        : forecastType === 'current'
-        ? <WeatherCard data={currentData} />
-        : (forecastData.map((day, index) => <WeatherCard key={index} data={day} />))
-      }
-    </div>
+      {!loading && currentData.cod === 200 && 
+      <>
+        <div className='city'>{ currentData?.name }</div>
+        <div className='nav-btns'>
+          <button className={`${forecastType === 'current' ? 'active' : ''}`} onClick={() => setForecastType('current')}>Current weather</button>
+          <button className={`${forecastType === '3-day' ? 'active' : ''}`} onClick={() => searchForecast(3)}>Next 3 days</button>
+          <button className={`${forecastType === '5-day' ? 'active' : ''}`} onClick={() => searchForecast(5)}>Next 5 days</button>
+        </div>
+      </>}
+      <div className='results-container'>
+        {
+          loading
+          ? 'Loading...'
+          : currentData.cod !== 200
+          ? <span className='error-msg'>{ currentData.message }</span>
+          : forecastType === 'current'
+          ? <WeatherCard data={currentData} isMetric={isMetric} />
+          : (forecastData.map((dayData, index) => <WeatherCard key={index} data={dayData} isMetric={isMetric} />))
+        }
+      </div>
     </>
   )
 }

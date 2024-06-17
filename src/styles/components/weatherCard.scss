@@ -1,0 +1,22 @@
+.weather-card {
+  margin-bottom: 5px;
+  background-color: $secondary-background;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 20px;
+  border-radius: 15px;
+
+  @media only screen and (max-width: $screen-md) {
+    font-size: 16px;
+  }
+
+  .description {
+    text-transform: capitalize;
+  }
+
+  img {
+    margin-left: -20px;
+  }
+}

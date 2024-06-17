@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { API_KEY } from '../utils/constants'
 
 const SearchField = ({ setCurrentData, location, setLocation, isMetric, setIsMetric, setLoading, setLat, setLon }) => {
+  const [favoriteCities, setFavoriteCities] = useState(localStorage.favoriteCities);
 
   const handleInputChange = (e) => {
     setLocation(e.target.value);
@@ -11,10 +12,10 @@ const SearchField = ({ setCurrentData, location, setLocation, isMetric, setIsMet
     setIsMetric(!isMetric);
   }
 
-  const searchLocation = async () => {
+  const searchLocation = async (city) => {
     if (location.trim() !== '') {
       setLoading(true);
-      const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=${isMetric ? 'metric' : 'imperial' }&appid=${API_KEY}`;
+      const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?q=${city ? city : location}&units=${isMetric ? 'metric' : 'imperial' }&appid=${API_KEY}`;
       let res = await fetch(urlCurrent);
       let searchData = await res.json();
 
@@ -33,7 +34,6 @@ const SearchField = ({ setCurrentData, location, setLocation, isMetric, setIsMet
 
       setCurrentData(searchData);
       setLoading(false);
-      console.log(searchData);
     }
   }
 
@@ -43,24 +43,57 @@ const SearchField = ({ setCurrentData, location, setLocation, isMetric, setIsMet
     }
   }
 
+  const handleFavoriteCity = () => {
+    if (localStorage.favoriteCities) {
+      let storedCities = JSON.parse(localStorage.favoriteCities);
+      if (!storedCities.includes(location)) {
+        storedCities.push(location);
+        localStorage.favoriteCities = JSON.stringify(storedCities);
+      }
+    } else {
+      localStorage.favoriteCities = JSON.stringify([location]);
+    }
+    setFavoriteCities(localStorage.favoriteCities);
+  }
+
+  const handleFavoriteSearch = (city) => {
+    setLocation(city);
+    searchLocation(city);
+  }
+
   useEffect(() => {
     searchLocation();
   }, [isMetric]);
 
   return (
-    <div className='search-bar'>
-      <input
-        type="text"
-        placeholder='Enter location'
-        value={location}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-      />
-      <i className="fa-solid fa-magnifying-glass" onClick={searchLocation}></i>
-      <button onClick={handleUnitsChange}>
-        {`Change to ${isMetric ? 'Fahrenheit' : 'Celsius'}`}
-      </button>
-    </div>
+    <>
+      <div className='search-container'>
+        <div className='search-bar'>
+          <input
+            type="text"
+            placeholder='Enter location'
+            value={location}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+          />
+          <i className="fa-solid fa-magnifying-glass" onClick={searchLocation}></i>
+        </div>
+        <button onClick={handleFavoriteCity}>
+          <i className="fa-regular fa-star"></i> {`Favorite this city`}
+        </button>
+        <button onClick={handleUnitsChange}>
+          {`Change to ${isMetric ? 'Fahrenheit' : 'Celsius'}`}
+        </button>
+      </div>
+      {favoriteCities && <div className='favorites-title'>Favorite locations</div>}
+      <div className='favorites-btns'>
+        {favoriteCities && 
+          JSON.parse(favoriteCities).map((city, index) => 
+            <button key={index} onClick={() => handleFavoriteSearch(city)}>{city}</button>
+          )
+        }
+      </div>
+    </>
   )
 }
 

@@ -1,5 +1,5 @@
 $primary-color: #3498db;
-$secondary-color: #2ecc71;
+$secondary-color: rgb(21, 92, 162);
 
 // grey scale colors
 $gray-100: #f8f9fa;
@@ -13,7 +13,9 @@ $gray-800: #343a40;
 $gray-900: #212529;
 
 // bg and text colors
-$background-color: #ffffff;
+$color-white: #ffffff;
+$background-color: #ECF5FC;
+$secondary-background: #a9d4fc;
 $text-color: $gray-900;
 
 // semantic colors

@@ -1,0 +1,15 @@
+.city {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.nav-btns {
+  margin-bottom: 20px;
+  display: flex;
+
+  button.active {
+    opacity: 1;
+    border-bottom: 3px solid $secondary-color;
+  }
+}
